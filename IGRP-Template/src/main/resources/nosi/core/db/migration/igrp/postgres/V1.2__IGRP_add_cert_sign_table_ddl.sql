@@ -20,5 +20,4 @@ CREATE TABLE IF NOT EXISTS public.tbl_cert_signs
     user_id character varying(255) ,
     user_ip character varying(255) ,
     CONSTRAINT tbl_cert_signs_pkey PRIMARY KEY (uuid)
-)
 );
