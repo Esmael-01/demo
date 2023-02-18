@@ -112,10 +112,13 @@
 		            	<pre class="prettyprint lang-java linenums">		            	
 		            	<%  
 		            		PrintWriter pw = new PrintWriter(out);
-		            		exception.printStackTrace(pw);
-		            		if(exception.getCause() != null){
-		            			exception.getCause().printStackTrace(pw);
+		            		if(exception!=null){
+		            			exception.printStackTrace(pw);
+			            		if(exception.getCause() != null){
+			            			exception.getCause().printStackTrace(pw);
+			            		}
 		            		}
+		            			
 		            	%>		            	
 		            	</pre>
 		            	</code>
