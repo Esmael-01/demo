@@ -67,5 +67,8 @@
 		<mapping class="nosi.webapps.igrp.dao.ActivityExecute" />
 		<!-- <mapping class="nosi.webapps.igrp.dao.CustomPermssionTask"/> -->
 		
+		<!-- Digital Signatures -->
+		<mapping class="nosi.webapps.igrp.dao.CertificatedSignatures" />
+		
 	</session-factory>
 </hibernate-configuration>
