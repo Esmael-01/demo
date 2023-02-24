@@ -407,21 +407,15 @@
 		    <version>31.1-jre</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.eclipse.jdt.core.compiler/ecj -->
+        <!-- https://mvnrepository.com/artifact/org.eclipse.jdt/ecj -->
 		<dependency>
-			<groupId>org.eclipse.jdt.core.compiler</groupId>
-			<artifactId>ecj</artifactId>
-			<version>${jdt.core.compiler.version}</version>
+		    <groupId>org.eclipse.jdt</groupId>
+		    <artifactId>ecj</artifactId>
+		    <version>${jdt.core.compiler.version}</version>
 		</dependency>
 		
 		<!-- For integration with git protocol/repositories -->
 	
-		<!-- https://mvnrepository.com/artifact/org.eclipse.jdt.core.compiler/ecj -->
-		<dependency>
-			<groupId>org.eclipse.jdt.core.compiler</groupId>
-			<artifactId>ecj</artifactId>
-			<version>${jdt.core.compiler.version}</version>
-		</dependency>
 
 		<!-- Javadev underscore API for jsonToXml transformation purpose -->
 		<!-- https://mvnrepository.com/artifact/com.github.javadev/underscore -->
