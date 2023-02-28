@@ -15,29 +15,23 @@
         getViewParam : function(id){
             var view = $.IGRP.components.calendar.get(id).fullCalendar('getView');
 
-            if(view.intervalStart){
-                $.IGRP.utils.createHidden({
-                    name :'p_start',
-                    value:view.intervalStart.format().igrpDateFormat(),
-                    class:'submittable'
-                });
-            }
+            $.IGRP.utils.createHidden({
+                name :'p_start',
+                value:view.intervalStart.format().igrpDateFormat(),
+                class:'submittable'
+            });
 
-            if(view.intervalEnd){
-                $.IGRP.utils.createHidden({
-                    name :'p_end',
-                    value:view.intervalEnd.format().igrpDateFormat(),
-                    class:'submittable'
-                });
-            }
+            $.IGRP.utils.createHidden({
+                name :'p_end',
+                value:view.intervalEnd.format().igrpDateFormat(),
+                class:'submittable'
+            });
 
-            if(view.type){
-                $.IGRP.utils.createHidden({
-                    name :'p_view',
-                    value:view.type,
-                    class:'submittable'
-                });
-            }
+            $.IGRP.utils.createHidden({
+                name :'p_view',
+                value:view.type,
+                class:'submittable'
+            });
         },
         nextOrPrevButtom : function(holder){
             var id = $('.igrp-calendar',holder).attr('id');
@@ -84,6 +78,7 @@
                     type    : type
                 });
 
+                console.log(d);
             }).fail(function(d){
                 $.IGRP.notify({
                     message : $.IGRP.utils.htmlDecode(d.responseText),
@@ -112,7 +107,7 @@
                 ebeforetoday    = p.ebeforetoday && p.ebeforetoday == 'false' ? true : false,
                 daysoff         = p.daysoff ? p.daysoff.split(',') : [],
                 date    		= p.defaultdate ? p.defaultdate : new Date().toJSON().slice(0,10).replace(/(\d*)-(\d*)-(\d*)/,'$3-$2-$1');
-            
+           
             cal.on('contextmenu', function (e) {
                 e.preventDefault();
             });
@@ -188,7 +183,6 @@
                             });
 
                             if(daysoff[0]){
-
                                 daysoff.forEach(function(d){
                                     var startDate   = $.IGRP.components.calendar.dateConvert(d),
                                         endDate     = moment(startDate,'YYYY-MM-DD').add('days', 1).format('YYYY-MM-DD');
@@ -327,7 +321,7 @@
                 }
             });
 
-            if(afterLoading || date){
+            if(afterLoading){
                 calendars[id] = calendar;
 
                 $.IGRP.components.calendar.nextOrPrevButtom(holder);

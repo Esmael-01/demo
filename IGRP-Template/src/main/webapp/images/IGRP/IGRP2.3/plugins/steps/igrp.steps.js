@@ -87,7 +87,7 @@
 		},
 
 		hideOrShowBtn : function (idx, obj) {
-
+			
 			if(totalStep === idx){
 				$('.step-footer .step-finish-btns',obj).removeClass('step-finish-btns');
 
@@ -105,53 +105,6 @@
 			}else{
 				$('.step-footer button.prev',obj).removeClass('hidden');
 			}
-		},
-
-		controllChange : function (p) {
-
-			const {currentIndex,newIndex, obj, valid} = p;
-
-			if (currentIndex < newIndex) {
-				$('label.error.form-validator-label', $(`.step-tab-panel:eq(${newIndex})`, obj)).remove();
-			}
-
-			com.hideOrShowBtn(currentIndex,obj);
-
-			if(obj.is("[control-start]") && obj.attr("control-start") == "true" && valid && isNav){
-				const fwlIndex = (newIndex + 1) <= (totalStep + 1) ? (newIndex + 1) : newIndex;
-				$("#p_fwl_"+obj.attr("item-name")).val(fwlIndex);
-			}
-
-			obj.data('corrent-step',newIndex);
-		},
-
-		controllChangeBeforeSubmitNext : function(p){
-
-			const {currentIndex,newIndex, obj, valid, currentObj} = p;
-
-			com.controllChange({
-				currentIndex : (currentIndex + 1),
-				newIndex 	 : newIndex,
-				obj 		 : obj,
-				valid 		 : valid
-			});
-
-			const nextStep = $('ul.step-steps li:eq('+(newIndex)+')');
-
-			currentObj.removeClass('active');
-			
-			$('ul.step-steps li:eq('+currentIndex+')').removeClass('active error').addClass('done');
-			
-			nextStep.addClass('active');
-
-			$('.step-footer .step-btn.prev').show();
-
-			if((currentIndex + 1) === totalStep)
-				$('.step-footer .step-btn.next').hide();
-
-			$(`.step-tab-panel[data-step="${nextStep.attr('data-step-target')}"]`).addClass('active');
-
-			return valid;
 		},
 
 		start: function (obj) {
@@ -186,11 +139,10 @@
 				},
 				onChange: function (currentIndex, newIndex, stepDirection) {
 
-					var currentObj  = $('.step-tab-panel.active', obj),
+					var valid		= currentIndex >= 0 ? true : false,
+						currentObj  = $('.step-tab-panel.active', obj),
 						nextObj     = currentObj.next('div.step-tab-panel.hiddenrules'),
 						prevObj     = currentObj.prev('div.step-tab-panel.hiddenrules');
-
-					let valid = currentIndex >= 0 ? true : false;
 					
 					if(stepDirection != 'none'){
 
@@ -207,158 +159,37 @@
 
 						$('ul.step-steps li:eq('+btnDirection+')').click();	
 
-						$('ul.step-steps li:eq('+totalStep+')').removeClass('active error');
+						$('ul.step-steps li:eq('+totalStep+')').removeClass('active error')
 
 						valid = true;
 
 					}else{
-						if(isNav){
 
-							$.IGRP.components.stepcontent.events.execute('stepActive', currentObj);//execute event
-							
-							if(stepDirection === 'forward'){// Next
+						$.IGRP.components.stepcontent.events.execute('stepActive', currentObj);//execute event
 
-								const fields = $.IGRP.utils.getFieldsValidate(currentObj);
+						var fields = $.IGRP.utils.getFieldsValidate(currentObj);
 
-								const liStep = $(`ul.step-steps li[data-step-target="${currentObj.attr('data-step')}"]`);
-								
-								if(liStep[0] && liStep.is('[action]')){ // Submit before next
-
-									const action = liStep.attr('action');
-
-									if(action && action !== undefined){
-
-										if (fields[0]) 
-											valid = fields.valid();
-
-										if(valid){
-
-											currentObj.addClass('done');
-
-											const objSubmit = $('.step-tab-panel.done');
-
-											$.IGRP.utils.loading.show();
-
-											$.IGRP.utils.submitStringAsFile({
-												pParam 		: {
-													pArrayFiles : $.IGRP.utils.submitPage2File.getFiles(objSubmit),
-													pArrayItem 	: objSubmit.find(':input').not(".notForm").serializeArray()
-												},
-												pUrl   		: liStep.attr('action'),
-												pNotify 	: false,
-												pComplete 	: function(resp){
-
-													$.IGRP.utils.loading.hide();
-
-													const xml = resp.responseXML || $($.parseXML(resp.response));
-
-													let alert = '';
-
-													$.each($(xml).find('messages message'),function(i,row){
-
-														const type = $(row).attr('type');
-							
-														if (type === 'error') {
+						if (stepDirection === 'forward' && isNav && fields[0]) {
 						
-															alert += $.IGRP.utils.message.alert({
-																type : 'danger',
-																text : $(row).text()
-															});
-							
-														}
-													});
 
-													if(alert !== ''){
-														$('.igrp-msg-wrapper').html(alert);
-														return false;
-
-													}else{
-
-														let refreshComponents = liStep.is('[refresh_components]') ? liStep.attr('refresh_components') : null;
-
-														if(refreshComponents){
-
-															refreshComponents = refreshComponents.split(',');
-
-															$.IGRP.utils.xsl.transform({
-																xsl     : $.IGRP.utils.getXMLStylesheet(xml),
-																xml     : xml,
-																nodes   : refreshComponents,
-																clicked : liStep,
-																complete: function(res){
-
-																	com.controllChangeBeforeSubmitNext({
-																		currentIndex : currentIndex,
-																		newIndex 	 : newIndex,
-																		obj 		 : obj,
-																		valid 		 : valid,
-																		currentObj   : currentObj
-																	});
-																	
-																}
-															});
-
-														}else{
-
-															com.controllChangeBeforeSubmitNext({
-																currentIndex : currentIndex,
-																newIndex 	 : newIndex,
-																obj 		 : obj,
-																valid 		 : valid,
-																currentObj 	 : currentObj
-															});
-														}
-														
-													}
-												}
-											});
-										}
-
-									}else{
-
-										$.IGRP.notify({
-											message : 'Acão de página não pode ser nulo',
-											type	: 'danger'
-										});
-
-										return false
-										
-									}
-
-								}else{
-
-									if (fields[0]) 
-										valid = fields.valid();
-
-										if(valid)
-											currentObj.addClass('done');
-
-									com.controllChange({
-										currentIndex : currentIndex,
-										newIndex 	 : newIndex,
-										obj 		 : obj,
-										valid 		 : valid
-									});
-
-									return valid;
-								}
-
-							}else{
-							
-								currentObj.removeClass('done');
-
-								com.controllChange({
-									currentIndex : currentIndex,
-									newIndex 	 : newIndex,
-									obj 		 : obj,
-									valid 		 : valid
-								});
-
-								return valid;
-
-							}
+							valid = fields.valid();
 						}
+
+						if (currentIndex < newIndex) {
+							$('label.error.form-validator-label', $(`.step-tab-panel:eq(${newIndex})`, obj)).remove();
+						}
+
+						com.hideOrShowBtn(currentIndex,obj);
+
+						if(obj.is("[control-start]") && obj.attr("control-start") == "true" && valid && isNav){
+							
+							$("#p_fwl_"+obj.attr("item-name")).val((newIndex + 1));
+						}
+
+						obj.data('corrent-step',newIndex);
 					}
+
+					return valid;
 				},
 				onFinish: function () {
 					
